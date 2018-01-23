@@ -9,10 +9,27 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+	var listOfWords = ["pilfer", "enthusiasm", "clown", "shakshuka", "calvin", "hobbes", "peanuts"]
+	let incorrectMovesAllowed = 7
+	var totalWins = 0
+	var totalLosses = 0
+	var currentGame: Game!
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		// Do any additional setup after loading the view, typically from a nib.
+		newRound()
+	}
+	
+	func newRound() {
+		let newWord = listOfWords.removeFirst()
+		currentGame = Game(word: newWord, incorrectMovesRemaining: incorrectMovesAllowed, guessedLetters: [])
+		updateUI()
+	}
+	
+	func updateUI() {
+		correctWordLabel.text = currentGame.formattedWord
+		scoreLabel.text = "Wins: \(totalWins), Losses: \(totalLosses)"
+		treeImageView.image = UIImage(named: "Tree \(currentGame.incorrectMovesRemaining)")
 	}
 
 	@IBOutlet weak var treeImageView: UIImageView!
@@ -22,7 +39,10 @@ class ViewController: UIViewController {
 	@IBOutlet var letterButtons: [UIButton]!
 	@IBAction func buttonPressed(_ sender: UIButton) {
 		sender.isEnabled = false
-		
+		let letterString = sender.title(for: .normal)!
+		let letter = Character(letterString.lowercased())
+		currentGame.playerGuessed(letter: letter)
+		updateUI()
 	}
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
